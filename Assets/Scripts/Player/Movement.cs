@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using UnityEngine;
 
@@ -17,10 +18,9 @@ public class Movement : MonoBehaviour
     {
         coroutineAllowed = true;
     }
-
-    void Update()
+    private void Update()
     {
-        transform.Translate(HorizontalMovement());
+        transform.Translate(MovementXAndZ());
     }
 
     private void OnTriggerEnter(Collider other)
@@ -57,7 +57,7 @@ public class Movement : MonoBehaviour
         }
         coroutineAllowed = true;
     }
-    private Vector3 HorizontalMovement()
+    private Vector3 MovementXAndZ()
     {
         Vector3 pos = new (Input.GetAxis("Horizontal") * horizontalSpeed * Time.deltaTime, 0, speed * Time.deltaTime);
         return pos;

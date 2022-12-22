@@ -2,6 +2,7 @@ using DG.Tweening;
 using DG.Tweening.Core.Easing;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static UnityEditor.Progress;
@@ -9,36 +10,35 @@ using static UnityEditor.Progress;
 public class BodyController : MonoBehaviour
 {
     [SerializeField] private GameObject firstBox;
+
     [SerializeField] private GameObject boxPart;
     [SerializeField] private GameObject dummy;
+    private GameObject lastBlockObject;
 
-    private List<GameObject> boxParts = new();
-    private List<Vector3> boxPartsPositions = new();
-
-    [SerializeField] private int playerLength = 3;
+    [SerializeField] private List<GameObject> boxParts = new();
+    [SerializeField] private int startingTowerHeight = 3;
     private const float boxHeight = 0.63f;
 
-
-    private void Start()
+    private void Awake()
     {
         BoxTowerCreate();
     }
-
-    // Update is called once per frame
     private void Update()
     {
-        
+        PlayerStatus();
     }
-    public void BoxTowerCreate()
+    private void BoxTowerCreate()
     {
-        boxPartsPositions.Add(firstBox.transform.position);
+        boxParts.Add(firstBox);
+        lastBlockObject = boxParts[boxParts.Count - 1];
 
-        for (int i = 1; i < playerLength; i++)
+        for (int i = 1; i < startingTowerHeight; i++)
         {
-            var newBoxPart = Instantiate(boxPart, new Vector3(transform.position.x, boxPartsPositions[boxPartsPositions.Count - 1].y + boxHeight, transform.position.z), Quaternion.identity, transform);
-            dummy.transform.DOMoveY(boxPartsPositions[boxPartsPositions.Count - 1].y + boxHeight + 0.92f, 0.03f).SetEase(Ease.Linear);
+            transform.position = new Vector3(transform.position.x, transform.position.y + boxHeight, transform.position.z);
+
+            var newBoxPart = Instantiate(boxPart, new Vector3(transform.position.x, lastBlockObject.transform.position.y - boxHeight, transform.position.z), Quaternion.identity, transform);
             boxParts.Add(newBoxPart);
-            boxPartsPositions.Add(newBoxPart.transform.position);
+            lastBlockObject = boxParts[boxParts.Count - 1];
         }
     }
     private void OnTriggerEnter(Collider other)
@@ -54,13 +54,23 @@ public class BodyController : MonoBehaviour
             Destroy(other.gameObject);
         }
     }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.GetComponent<Lava>())
+        {
+            TowerDecreaseByLava();
+        }
+    }
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject == null)
+        foreach (ContactPoint contact in collision.contacts)
         {
-            foreach (var item in boxParts)
+            if (contact.otherCollider.GetType() == (typeof(CapsuleCollider)))
             {
-                item.GetComponent<Rigidbody>().AddForce(Vector3.forward * 2, ForceMode.Impulse);
+                contact.thisCollider.transform.parent = null;
+                boxParts.Remove(contact.thisCollider.gameObject);
+                
+                lastBlockObject = boxParts[boxParts.Count - 1];
             }
         }
     }
@@ -68,47 +78,25 @@ public class BodyController : MonoBehaviour
     {
         for (; increaseAmount > 0; increaseAmount--)
         {
-            var newBoxPart = Instantiate(boxPart, new Vector3(transform.position.x, boxPartsPositions[boxPartsPositions.Count - 1].y + boxHeight, transform.position.z), Quaternion.identity, transform);
-            dummy.transform.DOMoveY(boxPartsPositions[boxPartsPositions.Count - 1].y + boxHeight + 1, 0.02f).SetEase(Ease.Linear);
+            transform.position = new Vector3(transform.position.x, transform.position.y + boxHeight, transform.position.z);
+
+            var newBoxPart = Instantiate(boxPart, new Vector3(transform.position.x, lastBlockObject.transform.position.y - boxHeight, transform.position.z), Quaternion.identity, transform);
             boxParts.Add(newBoxPart);
-            boxPartsPositions.Add(newBoxPart.transform.position);
-            playerLength++;
+            lastBlockObject = boxParts[boxParts.Count - 1];
         }
     }
-    void SnakeDecrease(int decreaseAmount)
+    private void TowerDecreaseByLava()
     {
-        for (; decreaseAmount > 0; decreaseAmount--)
-        {
-            {
-                GameObject partToDsetroy = boxParts[boxParts.Count - 1];
-                Destroy(partToDsetroy);
-                boxParts.RemoveAt(boxParts.Count - 1);
-                boxPartsPositions.RemoveAt(boxPartsPositions.Count - 1);
-                playerLength--;
-            }
-        }
-
-        //for (; decreaseAmount > 0; decreaseAmount--)
-        //{
-        //    if (snakeParts.Count == 0)
-        //    {
-        //        gameManager.isGameOver = true;
-        //        audioSource.Play();
-        //        deathParticle.Play();
-        //        head.GetComponent<MeshRenderer>().enabled = false;
-
-        //        break;
-        //    }
-        //    else
-        //    {
-        //        GameObject partToDsetroy = boxParts[boxParts.Count - 1];
-        //        Destroy(partToDsetroy);
-        //        boxParts.RemoveAt(boxParts.Count - 1);
-        //        boxPartsPositions.RemoveAt(boxPartsPositions.Count - 1);
-        //        playerLength--;
-        //    }
-        //}
+        lastBlockObject.transform.parent = null;
+        boxParts.Remove(lastBlockObject);
+        Destroy(lastBlockObject);
+        lastBlockObject = boxParts[boxParts.Count - 1];
     }
-
-
+    private void PlayerStatus()
+    {
+        if (boxParts.Count == 0)
+        {
+            EventManager.SendGameIsOver();
+        }
+    }
 }

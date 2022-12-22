@@ -1,18 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Behaviour : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private Movement playerMovement;
+    private BodyController playerBody;
+
     void Start()
     {
+        playerBody = GetComponent<BodyController>();
+        playerMovement = GetComponent<Movement>();
+
         
+        EventManager.GameIsActive.AddListener(GameStart);
+        EventManager.GameOver.AddListener(GameOver);
     }
 
-    // Update is called once per frame
     void Update()
     {
-       
+    }
+    private void GameOver()
+    {
+        //uiManager.GameOverScreenChange();
+        //isGameActive = false;
+        playerMovement.enabled = false;
+        playerBody.enabled = false;
+
+
+        EventManager.GameOver.RemoveListener(GameOver);
+    }
+    private void GameStart()
+    {
+        playerMovement.enabled = true;
+        playerBody.enabled = true;
+        EventManager.GameOver.RemoveListener(GameStart);
     }
 }
