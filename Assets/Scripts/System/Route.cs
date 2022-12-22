@@ -4,7 +4,11 @@ public class Route : MonoBehaviour
 {
     [SerializeField] Transform[] waypoints;
     [SerializeField] bool isCanDraw;
-
+    [SerializeField] Transform player;
+    private void Update()
+    {
+        HeightUpdate();
+    }
     private void OnDrawGizmos()
     {
         if (isCanDraw)
@@ -20,5 +24,9 @@ public class Route : MonoBehaviour
                 previousPoint = point;
             }
         }
+    }
+    private void HeightUpdate()
+    {
+        transform.position = new Vector3(transform.position.x, player.position.y, transform.position.z);
     }
 }
