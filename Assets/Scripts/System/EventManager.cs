@@ -1,22 +1,31 @@
 ﻿using UnityEngine.Events;
+using UnityEngine;
+using static GameStateController;
 
 public class EventManager
 {
-    public static UnityEvent<int> OnBoxCollected = new();
-    public static UnityEvent GameIsActive = new();
-    public static UnityEvent GameOver = new();
+    public static UnityEvent OnStarCollected = new();
+    public static UnityEvent<GameState> OnGameStateChanged = new();
 
-    public static void SendBoxCollected(int amount)
+    public static UnityEvent PlayerWin = new();
+    public static UnityEvent PlayerDead = new();
+
+    public static void SendGameStateChanged(GameState newState)
     {
-        OnBoxCollected.Invoke(amount);
+        OnGameStateChanged.Invoke(newState);
     }
-    public static void SendGameIsActive()
+    public static void SendPlayerDead()
     {
-        GameIsActive.Invoke();
+        PlayerDead.Invoke();
     }
-    public static void SendGameIsOver()
+    public static void SendPlayerWin()
     {
-        GameOver.Invoke();
+        PlayerWin.Invoke();
+    }
+
+    public static void SendStarCollected()
+    {
+        OnStarCollected.Invoke();
     }
 }
 
