@@ -1,11 +1,5 @@
-using DG.Tweening;
-using DG.Tweening.Core.Easing;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static UnityEditor.Progress;
 
 public class BodyController : MonoBehaviour
 {
@@ -19,27 +13,11 @@ public class BodyController : MonoBehaviour
     [SerializeField] private int startingTowerHeight = 3;
     private const float boxHeight = 0.63f;
 
+    public bool isDead;
+
     private void Awake()
     {
-        BoxTowerCreate();
-    }
-    private void Update()
-    {
-        PlayerStatus();
-    }
-    private void BoxTowerCreate()
-    {
-        boxParts.Add(firstBox);
-        lastBlockObject = boxParts[boxParts.Count - 1];
-
-        for (int i = 1; i < startingTowerHeight; i++)
-        {
-            transform.position = new Vector3(transform.position.x, transform.position.y + boxHeight, transform.position.z);
-
-            var newBoxPart = Instantiate(boxPart, new Vector3(transform.position.x, lastBlockObject.transform.position.y - boxHeight, transform.position.z), Quaternion.identity, transform);
-            boxParts.Add(newBoxPart);
-            lastBlockObject = boxParts[boxParts.Count - 1];
-        }
+        InitialBoxTowerCreate();
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -56,7 +34,7 @@ public class BodyController : MonoBehaviour
     }
     private void OnTriggerStay(Collider other)
     {
-        if (other.GetComponent<Lava>())
+        if (other.GetComponent<Lava>() && !isDead)
         {
             TowerDecreaseByLava();
         }
@@ -69,7 +47,11 @@ public class BodyController : MonoBehaviour
             {
                 contact.thisCollider.transform.parent = null;
                 boxParts.Remove(contact.thisCollider.gameObject);
-                
+                if (boxParts.Count == 0)
+                {
+                    isDead = true;
+                    break;
+                }
                 lastBlockObject = boxParts[boxParts.Count - 1];
             }
         }
@@ -85,18 +67,33 @@ public class BodyController : MonoBehaviour
             lastBlockObject = boxParts[boxParts.Count - 1];
         }
     }
+    private void InitialBoxTowerCreate()
+    {
+        boxParts.Add(firstBox);
+        lastBlockObject = boxParts[boxParts.Count - 1];
+
+        for (int i = 1; i < startingTowerHeight; i++)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y + boxHeight, transform.position.z);
+
+            var newBoxPart = Instantiate(boxPart, new Vector3(transform.position.x, lastBlockObject.transform.position.y - boxHeight, transform.position.z), Quaternion.identity, transform);
+            boxParts.Add(newBoxPart);
+            lastBlockObject = boxParts[boxParts.Count - 1];
+            isDead = false;
+        }
+    }
     private void TowerDecreaseByLava()
     {
         lastBlockObject.transform.parent = null;
         boxParts.Remove(lastBlockObject);
         Destroy(lastBlockObject);
-        lastBlockObject = boxParts[boxParts.Count - 1];
-    }
-    private void PlayerStatus()
-    {
-        if (boxParts.Count == 0)
+        if (boxParts.Count == 1)
         {
-            EventManager.SendGameIsOver();
+            isDead = true;
+        }
+        else
+        {
+            lastBlockObject = boxParts[boxParts.Count - 1];
         }
     }
 }

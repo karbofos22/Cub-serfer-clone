@@ -27,6 +27,9 @@ public class Route : MonoBehaviour
     }
     private void HeightUpdate()
     {
-        transform.position = new Vector3(transform.position.x, player.position.y, transform.position.z);
+        if (player != null)
+        {
+            transform.position = new Vector3(transform.position.x, player.position.y, transform.position.z);
+        }
     }
 }
