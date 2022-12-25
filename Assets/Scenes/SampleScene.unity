@@ -167,7 +167,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18b2184c7d7f98b498f9f21eb9f970f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
 --- !u!33 &47096912
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -608,8 +607,6 @@ MonoBehaviour:
   levelRewardAmount: 30
   nextLevelButtonPos: {fileID: 2122734508}
   targetPointVar: {fileID: 1386137320}
-  startDelay: 0.1
-  repeatDelay: 0.2
 --- !u!1001 &131819670
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2214,7 +2211,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh29232
+  m_Name: pb_Mesh32792
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
