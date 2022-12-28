@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class BodyController : MonoBehaviour
 {
+    #region Fields
     [SerializeField] private GameObject firstBox;
 
     [SerializeField] private GameObject boxPart;
@@ -14,6 +15,7 @@ public class BodyController : MonoBehaviour
     private const float boxHeight = 0.63f;
 
     public bool isDead;
+    #endregion
 
     private void Awake()
     {
@@ -23,18 +25,18 @@ public class BodyController : MonoBehaviour
     {
         if (other.TryGetComponent<SingleBox>(out SingleBox box))
         {
-            TowerIncrease(box.growValue);
+            TowerIncrease(box.GrowValue);
             Destroy(other.gameObject);
         }
         if (other.TryGetComponent<BoxTower>(out BoxTower boxTower))
         {
-            TowerIncrease(boxTower.growValue);
+            TowerIncrease(boxTower.GrowValue);
             Destroy(other.gameObject);
         }
     }
     private void OnTriggerStay(Collider other)
     {
-        if (other.GetComponent<Lava>() && !isDead)
+        if (other.GetComponent<Acid>() && !isDead)
         {
             TowerDecreaseByLava();
         }
@@ -84,15 +86,15 @@ public class BodyController : MonoBehaviour
     }
     private void TowerDecreaseByLava()
     {
-        lastBlockObject.transform.parent = null;
-        boxParts.Remove(lastBlockObject);
-        Destroy(lastBlockObject);
         if (boxParts.Count == 1)
         {
             isDead = true;
         }
         else
         {
+            lastBlockObject.transform.parent = null;
+            boxParts.Remove(lastBlockObject);
+            Destroy(lastBlockObject);
             lastBlockObject = boxParts[boxParts.Count - 1];
         }
     }

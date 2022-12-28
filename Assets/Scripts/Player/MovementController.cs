@@ -12,20 +12,21 @@ public class MovementController : MonoBehaviour
     [SerializeField] private float autoTurnSpeed;
     [SerializeField] private float horizontalSpeed;
     private bool coroutineAllowed;
+    private Rigidbody playerRb;
     #endregion
 
     private void Start()
     {
+        playerRb = GetComponent<Rigidbody>();
         coroutineAllowed = true;
     }
-    private void Update()
+    private void FixedUpdate()
     {
-        transform.Translate(MovementXAndZ());
+        Movement();
     }
-
     private void OnTriggerEnter(Collider other)
     {
-        if (coroutineAllowed && other.GetComponent<TurnStar>())
+        if (coroutineAllowed && other.GetComponent<TurnPoint>())
         {
             StartCoroutine(AutoTurn());
         }
@@ -57,9 +58,15 @@ public class MovementController : MonoBehaviour
         }
         coroutineAllowed = true;
     }
-    private Vector3 MovementXAndZ()
+    private void Movement()
     {
-        Vector3 pos = new (Input.GetAxis("Horizontal") * horizontalSpeed * Time.deltaTime, 0, speed * Time.deltaTime);
-        return pos;
+        float xMovement = Input.GetAxis("Horizontal") * horizontalSpeed * Time.deltaTime;
+        float zMovement = speed * Time.deltaTime;
+
+        playerRb.velocity = transform.TransformDirection(xMovement, playerRb.velocity.y, zMovement);
+    }
+    private void OnDisable()
+    {
+        playerRb.velocity = Vector3.zero;
     }
 }
