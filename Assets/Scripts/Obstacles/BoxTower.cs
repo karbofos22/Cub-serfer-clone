@@ -15,7 +15,9 @@ public class BoxTower : MonoBehaviour
     [SerializeField] private int boxTowerLength = 3;
     const float boxHeight = 0.63f;
 
-    public int growValue;
+    private int growValue;
+    public int GrowValue { get { return growValue; } }
+
     #endregion
 
     void Start()

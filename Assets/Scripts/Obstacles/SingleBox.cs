@@ -1,8 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SingleBox : MonoBehaviour
 {
-    public int growValue = 1;
+    [SerializeField] private int growValue = 1;
+    public int GrowValue { get { return growValue; } }
+
 }
