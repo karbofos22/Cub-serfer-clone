@@ -9,6 +9,7 @@ public class UiController : MonoBehaviour
     [SerializeField] private GameObject titleScreen;
     [SerializeField] private GameObject winScreen;
     [SerializeField] private GameObject loseScreen;
+    [SerializeField] private GameObject getReadyScreen;
 
     private void Awake()
     {
@@ -17,6 +18,7 @@ public class UiController : MonoBehaviour
     private void OnGameStateChanged(GameState state)
     {
         titleScreen.SetActive(state == GameState.Menu);
+        getReadyScreen.SetActive(state == GameState.GetReady);
         winScreen.SetActive(state == GameState.Win);
         loseScreen.SetActive(state == GameState.Lose);
     }

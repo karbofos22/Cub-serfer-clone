@@ -5,7 +5,7 @@ using UnityEngine;
 public class MovementController : MonoBehaviour
 {
     #region Fields
-    [SerializeField] Transform[] route;
+    [SerializeField] private Transform[] route;
     private int routeToGo = 0;
     private float tParam = 0;
     [SerializeField] private float speed;

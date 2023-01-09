@@ -3,18 +3,26 @@ using UnityEngine;
 
 public class UpdateCollectedBoxCountText : MonoBehaviour
 {
+    #region Injection
+    public void Construct(TotalScores totalScores)
+    {
+        _totalScores = totalScores;
+    }
+    private TotalScores _totalScores;
+    #endregion
+
     private TextMeshProUGUI boxesCountText;
-    private int boxes;
 
     void Start()
     {
         boxesCountText = GetComponent<TextMeshProUGUI>();
-        EventManager.OnBoxCollected.AddListener(ScoreIncrease);
     }
-
-    private void ScoreIncrease()
+    private void Update()
     {
-        boxes++;
-        boxesCountText.text = $"{boxes}";
+        ScoresUpdate();
+    }
+    private void ScoresUpdate()
+    {
+        boxesCountText.text = $"{_totalScores.scoresForUi}";
     }
 }

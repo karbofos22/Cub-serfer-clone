@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
     #region Fields
     private MovementController playerMovement;
     private BodyController playerBody;
+    private Vector3 playerStartingPos = new(-81.18f,13.45f,-90.72f);
 
     [SerializeField] private Animator animator;
     #endregion

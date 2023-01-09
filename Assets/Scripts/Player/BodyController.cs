@@ -49,6 +49,7 @@ public class BodyController : MonoBehaviour
             {
                 contact.thisCollider.transform.parent = null;
                 boxParts.Remove(contact.thisCollider.gameObject);
+                contact.thisCollider.gameObject.transform.parent = contact.otherCollider.transform;
                 if (boxParts.Count == 0)
                 {
                     isDead = true;

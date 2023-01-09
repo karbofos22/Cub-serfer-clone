@@ -3,17 +3,18 @@ using UnityEngine;
 
 public class FlyToTarget : MonoBehaviour
 {
+    #region Fields
     [SerializeField] float flyTime;
+    [SerializeField] Transform target;
     private bool isCollected;
-
-    [SerializeField] private Transform target;
+    #endregion
 
     private void OnTriggerEnter(Collider other)
     {
         if (!isCollected)
         {
             isCollected = true;
-            transform.DOMove(target.position, flyTime).SetEase(Ease.Linear);
+            transform.DOMove(target.transform.position, flyTime).SetEase(Ease.Linear);
             EventManager.SendBoxCollected();
             Destroy(gameObject, flyTime);
         }
